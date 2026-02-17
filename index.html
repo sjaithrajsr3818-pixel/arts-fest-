@@ -1,18 +1,19 @@
+
 <!DOCTYPE html>
 <html lang="ml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IASE Arts Fest 2026 – Live Results</title>
+    <title>IASE Arts Fest 2026 - Live Results</title>
     <style>
         :root {
-            --primary-color: #1a237e;
-            --accent-color: #ffd600;
-            --bg-color: #f0f2f5;
+            --primary-color: #0d47a1; /* IASE Blue */
+            --accent-color: #ffca28;
+            --bg-color: #f8f9fa;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
             margin: 0;
             background-color: var(--bg-color);
             color: #333;
@@ -21,10 +22,12 @@
         header {
             background-color: var(--primary-color);
             color: white;
-            padding: 30px 15px;
+            padding: 35px 15px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
+
+        h1 { margin: 0; font-size: 1.8rem; letter-spacing: 1px; }
 
         .search-container {
             padding: 20px;
@@ -39,30 +42,42 @@
             border: 2px solid #ddd;
             font-size: 16px;
             outline: none;
-            transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        #itemSearch:focus { border-color: var(--primary-color); }
+        .category-title {
+            background: #fff;
+            padding: 12px 20px;
+            margin: 25px auto 10px;
+            max-width: 1100px;
+            border-left: 8px solid var(--accent-color);
+            text-align: left;
+            border-radius: 5px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
 
         .item-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 15px;
-            padding: 20px;
+            padding: 10px 20px 40px;
             max-width: 1100px;
             margin: 0 auto;
         }
 
         .item-btn {
             background: white;
-            border: none;
-            padding: 20px 10px;
-            border-radius: 15px;
+            border: 1px solid #e0e0e0;
+            padding: 15px 10px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
-            color: var(--primary-color);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: 0.3s;
+            color: #444;
+            transition: all 0.3s ease;
+            min-height: 75px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -70,12 +85,13 @@
         }
 
         .item-btn:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             background: var(--primary-color);
             color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 6px 12px rgba(13, 71, 161, 0.2);
         }
 
-        /* Result View Overlay */
         #resultView {
             display: none;
             position: fixed;
@@ -84,128 +100,122 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            overflow-y: auto;
+            backdrop-filter: blur(5px);
         }
 
         .modal-content {
             background: white;
             width: 90%;
-            max-width: 550px;
-            border-radius: 20px;
+            max-width: 500px;
+            border-radius: 24px;
             padding: 25px;
             position: relative;
-            animation: fadeIn 0.3s ease-out;
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
+        @keyframes slideIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
         .back-btn {
-            background: #eee;
+            background: #f0f0f0;
             border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
+            padding: 10px 18px;
+            border-radius: 10px;
             cursor: pointer;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-weight: bold;
+            color: #555;
         }
 
         .result-card {
-            background: #f9f9f9;
-            margin: 10px 0;
+            background: #fff;
+            margin: 12px 0;
             padding: 15px;
-            border-radius: 12px;
+            border-radius: 15px;
             display: flex;
             align-items: center;
-            border-left: 5px solid var(--primary-color);
+            border: 1px solid #eee;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        .rank-box {
-            font-size: 24px;
-            font-weight: bold;
-            margin-right: 20px;
-            color: var(--primary-color);
-            min-width: 40px;
-        }
+        .rank-box { font-size: 24px; font-weight: bold; margin-right: 20px; color: var(--primary-color); min-width: 40px; }
+        .details b { display: block; font-size: 18px; margin-bottom: 2px; }
+        .details span { font-size: 14px; color: #777; }
 
-        .details b { display: block; font-size: 18px; margin-bottom: 4px; }
-        .details span { font-size: 14px; color: #666; }
-
-        footer {
-            text-align: center;
-            padding: 30px;
-            color: #777;
-            font-size: 14px;
-        }
+        footer { text-align: center; padding: 40px; color: #888; font-size: 14px; border-top: 1px solid #eee; }
 
         @media (max-width: 500px) {
             .item-grid { grid-template-columns: 1fr 1fr; }
+            h1 { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>School Arts Fest 2026 – Live Results</h1>
+    <h1>IASE Arts Fest 2026 – Live Results</h1>
 </header>
 
 <div class="search-container">
     <input type="text" id="itemSearch" placeholder="ഐറ്റം സെർച്ച് ചെയ്യൂ..." onkeyup="filterItems()">
 </div>
 
-<div class="item-grid" id="itemGrid">
-    </div>
+<div class="category-title">Stage Items</div>
+<div class="item-grid" id="stageGrid"></div>
+
+<div class="category-title">Off Stage Items</div>
+<div class="item-grid" id="offStageGrid"></div>
 
 <div id="resultView">
     <div class="modal-content">
-        <button class="back-btn" onclick="closeResults()">← Back</button>
-        <h2 id="selectedItemTitle" style="color: var(--primary-color);">Item Name</h2>
-        <hr>
-        <div id="resultsContainer">
-            </div>
+        <button class="back-btn" onclick="closeResults()">← Back to Home</button>
+        <h2 id="selectedItemTitle" style="color: var(--primary-color); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px;">Item Name</h2>
+        <div id="resultsContainer"></div>
     </div>
 </div>
 
 <footer>
+    IASE Arts Fest 2026<br>
     Scan QR Code to View Live Updated Results
 </footer>
 
 <script>
-    // നിങ്ങളുടെ പുതിയ CSV ലിങ്ക് താഴെ നൽകിയിരിക്കുന്നു
     const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvr_vyPeraPYciyV4MuAdJRgnTjuXHR55hOBpWIv3Uvs1vsAaUz4pTI3jiNA8dK_bTqXR_JsibZyjX/pub?gid=0&single=true&output=csv';
 
-    const items = [
-        "Essay Writing (Malayalam)", "Essay Writing (English)", "Essay Writing (Hindi)", 
-        "Essay Writing (Sanskrit)", "Short Story Writing", "Poem Writing", 
-        "Quiz", "Drawing", "Painting", "Oil Painting", 
-        "Water Colouring", "Cartoon", "Pencil Drawing"
-    ];
+    // ഐറ്റങ്ങളെ രണ്ട് വിഭാഗമായി തിരിക്കുന്നു
+    const categorisedItems = {
+        "Stage": ["Elocution (Malayalam)", "Elocution (English)", "Light Music", "Monoact", "Mimicry", "Folk Dance"], 
+        "Off Stage": [
+            "Essay Writing (Malayalam)", "Essay Writing (English)", "Essay Writing (Hindi)", 
+            "Essay Writing (Sanskrit)", "Short Story Writing", "Poem Writing", 
+            "Quiz", "Drawing", "Painting", "Oil Painting", 
+            "Water Colouring", "Cartoon", "Pencil Drawing"
+        ]
+    };
 
     let resultsData = [];
 
-    // ഐറ്റങ്ങൾ പേജിൽ കാണിക്കുന്നു
     function displayButtons() {
-        const grid = document.getElementById('itemGrid');
-        items.forEach(item => {
-            const btn = document.createElement('button');
-            btn.className = 'item-btn';
-            btn.innerText = item;
-            btn.onclick = () => showResults(item);
-            grid.appendChild(btn);
-        });
+        const stageGrid = document.getElementById('stageGrid');
+        categorisedItems["Stage"].forEach(item => stageGrid.appendChild(createBtn(item)));
+
+        const offStageGrid = document.getElementById('offStageGrid');
+        categorisedItems["Off Stage"].forEach(item => offStageGrid.appendChild(createBtn(item)));
     }
 
-    // ഗൂഗിൾ ഷീറ്റിൽ നിന്നും ഡാറ്റ എടുക്കുന്നു
+    function createBtn(item) {
+        const btn = document.createElement('button');
+        btn.className = 'item-btn';
+        btn.innerText = item;
+        btn.onclick = () => showResults(item);
+        return btn;
+    }
+
     async function loadSheetData() {
         try {
             const response = await fetch(SHEET_URL);
             const data = await response.text();
             resultsData = parseCSV(data);
-        } catch (e) {
-            console.error("Data loading failed", e);
-        }
+        } catch (e) { console.error("Data load error", e); }
     }
 
     function parseCSV(text) {
@@ -224,35 +234,25 @@
         const container = document.getElementById('resultsContainer');
         container.innerHTML = '';
 
-        // തിരഞ്ഞെടുക്കുന്ന ഐറ്റത്തിന്റെ റിസൾട്ട് ഫിൽട്ടർ ചെയ്യുന്നു
         const filtered = resultsData.filter(r => r.Item === itemName);
         
-        // 1, 2, 3 റാങ്കുകൾ ക്രമത്തിൽ കാണിക്കുന്നു
         [1, 2, 3].forEach(rank => {
             const winner = filtered.find(w => parseInt(w.Rank) === rank);
             const card = document.createElement('div');
             card.className = 'result-card';
-            
             if (winner) {
-                card.innerHTML = `
-                    <div class="rank-box">${rank}</div>
-                    <div class="details">
-                        <b>${winner.Name}</b>
-                        <span>Class: ${winner.Class} | House: ${winner.House}</span>
-                    </div>
-                `;
+                card.innerHTML = `<div class="rank-box">${rank}</div><div class="details"><b>${winner.Name}</b><span>Class: ${winner.Class} | House: ${winner.House}</span></div>`;
             } else {
-                card.innerHTML = `<div class="rank-box">${rank}</div><div class="details"><span>Result awaiting...</span></div>`;
+                card.innerHTML = `<div class="rank-box">${rank}</div><div class="details"><span>Updating soon...</span></div>`;
             }
             container.appendChild(card);
         });
-
         document.getElementById('resultView').style.display = 'flex';
-        document.body.style.overflow = 'hidden'; // മദാൽ തുറക്കുമ്പോൾ ബാക്ക്ഗ്രൗണ്ട് സ്ക്രോൾ ഒഴിവാക്കാൻ
+        document.body.style.overflow = 'hidden';
     }
 
-    function closeResults() {
-        document.getElementById('resultView').style.display = 'none';
+    function closeResults() { 
+        document.getElementById('resultView').style.display = 'none'; 
         document.body.style.overflow = 'auto';
     }
 
@@ -264,10 +264,7 @@
         });
     }
 
-    window.onload = () => {
-        displayButtons();
-        loadSheetData();
-    };
+    window.onload = () => { displayButtons(); loadSheetData(); };
 </script>
 
 </body>
