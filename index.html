@@ -172,7 +172,13 @@
         <div id="resultsContainer"></div>
     </div>
 </div>
-
+<div id="houseBoard" style="padding:20px; max-width:600px; margin:auto;">
+    <h2 style="text-align:center; color:var(--primary-color)">🏆 IASE House Leaderboard</h2>
+    <div id="leaderboardContainer"></div>
+    <p style="text-align:center; font-size:13px; color:#777;">
+        Last Updated: <span id="lastUpdated">--</span>
+    </p>
+</div>
 <footer>
     IASE Arts Fest 2026<br>
     Scan QR Code to View Live Updated Results
@@ -210,13 +216,15 @@
         return btn;
     }
 
-    async function loadSheetData() {
-        try {
-            const response = await fetch(SHEET_URL);
-            const data = await response.text();
-            resultsData = parseCSV(data);
-        } catch (e) { console.error("Data load error", e); }
-    }
+   async function loadSheetData() {
+    try {
+        const response = await fetch(SHEET_URL);
+        const data = await response.text();
+        resultsData = parseCSV(data);
+        calculateHousePoints(); // leaderboard update
+    } catch (e) { console.error("Data load error", e); }
+}
+
 
     function parseCSV(text) {
         const rows = text.split('\n');
@@ -241,7 +249,12 @@
             const card = document.createElement('div');
             card.className = 'result-card';
             if (winner) {
-                card.innerHTML = `<div class="rank-box">${rank}</div><div class="details"><b>${winner.Name}</b><span>Class: ${winner.Class} | House: ${winner.House}</span></div>`;
+                card.innerHTML = `<div class="rank-box">${rank}</div><div class="details"><b>${winner.Name}</b><span>
+Class: ${winner.Class} |
+House: ${winner.House} <br>
+Published: ${winner.Timestamp}
+</span>
+</div>`;
             } else {
                 card.innerHTML = `<div class="rank-box">${rank}</div><div class="details"><span>Updating soon...</span></div>`;
             }
@@ -264,9 +277,98 @@
         });
     }
 
-    window.onload = () => { displayButtons(); loadSheetData(); };
+    window.onload = () => {
+    displayButtons();
+    loadSheetData();
+
+    // Auto refresh every 30 seconds
+    setInterval(loadSheetData, 30000);
+};
+
+
+
+const GROUP_ITEMS = [
+    "Folk Dance",
+    "Monoact",
+    "Mimicry",
+    "Light Music"
+];
+    const INDIVIDUAL_POINTS = {
+    1: 5,
+    2: 3,
+    3: 1
+};
+
+const GROUP_POINTS = {
+    1: 10,
+    2: 7,
+    3: 5
+};
+
+function calculateHousePoints(){
+
+    let housePoints = {};
+
+    resultsData.forEach(entry => {
+
+        const rank = parseInt(entry.Rank);
+        const item = entry.Item;
+
+        let points = 0;
+
+        // Check if group item
+        if(GROUP_ITEMS.includes(item)){
+            points = GROUP_POINTS[rank] || 0;
+        } else {
+            points = INDIVIDUAL_POINTS[rank] || 0;
+        }
+
+        if(points > 0){
+
+            if(!housePoints[entry.House]){
+                housePoints[entry.House] = 0;
+            }
+
+            housePoints[entry.House] += points;
+        }
+
+    });
+
+    displayLeaderboard(housePoints);
+}
+
+    function displayLeaderboard(housePoints){
+
+    const container = document.getElementById('leaderboardContainer');
+    container.innerHTML = '';
+
+    let sorted = Object.entries(housePoints)
+        .sort((a,b)=> b[1] - a[1]);
+
+    sorted.forEach((house,index)=>{
+
+        const div = document.createElement('div');
+        div.className = 'result-card';
+
+        div.innerHTML = `
+            <div class="rank-box">${index+1}</div>
+            <div class="details">
+                <b>${house[0]}</b>
+                <span>${house[1]} Points</span>
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+
+    document.getElementById('lastUpdated').innerText =
+        new Date().toLocaleTimeString();
+}
+
+    
 </script>
 
 </body>
 </html>
+
 
