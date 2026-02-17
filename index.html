@@ -358,13 +358,14 @@ function calculateHousePoints(){
 
         div.style.borderLeft = "10px solid " + houseColor;
 
-        div.innerHTML = `
-            <div class="rank-box">${index+1}</div>
-            <div class="details">
-                <b>${house[0]} House</b>
-                <span>${house[1]} Points</span>
-            </div>
-        `;
+       div.innerHTML = `
+    <div class="rank-box">${index+1}</div>
+    <div class="details">
+        <b>${house[0]} House</b>
+        <span>${house[1]} Points</span>
+    </div>
+`;
+
 
         container.appendChild(div);
     });
@@ -389,6 +390,7 @@ function calculateHousePoints(){
 
 </body>
 </html>
+
 
 
 
