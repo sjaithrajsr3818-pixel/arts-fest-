@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ml">
 <head>
@@ -185,12 +184,6 @@
 </footer>
 
 <script>
-    const HOUSE_COLORS = {
-    "Red": "#e53935",
-    "Yellow": "#fdd835",
-    "Blue": "#1e88e5",
-    "Green": "#43a047"
-};
     const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvr_vyPeraPYciyV4MuAdJRgnTjuXHR55hOBpWIv3Uvs1vsAaUz4pTI3jiNA8dK_bTqXR_JsibZyjX/pub?gid=0&single=true&output=csv';
 
     // ഐറ്റങ്ങളെ രണ്ട് വിഭാഗമായി തിരിക്കുന്നു
@@ -354,14 +347,10 @@ function calculateHousePoints(){
         const div = document.createElement('div');
         div.className = 'result-card';
 
-        let houseColor = HOUSE_COLORS[house[0]] || "#999";
-
-        div.style.borderLeft = "10px solid " + houseColor;
-
         div.innerHTML = `
             <div class="rank-box">${index+1}</div>
             <div class="details">
-                <b>${house[0]} House</b>
+                <b>${house[0]}</b>
                 <span>${house[1]} Points</span>
             </div>
         `;
@@ -371,9 +360,6 @@ function calculateHousePoints(){
 
     document.getElementById('lastUpdated').innerText =
         new Date().toLocaleTimeString();
-    }
-    document.getElementById('lastUpdated').innerText =
-        new Date().toLocaleTimeString();
 }
 
     
@@ -381,6 +367,3 @@ function calculateHousePoints(){
 
 </body>
 </html>
-
-
-
