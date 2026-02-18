@@ -237,31 +237,54 @@
     }
 
     function showResults(itemName) {
-        document.getElementById('selectedItemTitle').innerText = itemName;
-        const container = document.getElementById('resultsContainer');
-        container.innerHTML = '';
 
-        const filtered = resultsData.filter(r => r.Item === itemName);
-        
-        [1, 2, 3].forEach(rank => {
-            const winner = filtered.find(w => parseInt(w.Rank) === rank);
+    document.getElementById('selectedItemTitle').innerText = itemName;
+    const container = document.getElementById('resultsContainer');
+    container.innerHTML = '';
+
+    const filtered = resultsData.filter(r => r.Item === itemName);
+
+    [1, 2, 3].forEach(rank => {
+
+        const winners = filtered.filter(w => parseInt(w.Rank) === rank);
+
+        if(winners.length > 0){
+
+            winners.forEach(winner => {
+
+                const card = document.createElement('div');
+                card.className = 'result-card';
+
+                card.innerHTML = `
+                <div class="rank-box">${rank}</div>
+                <div class="details">
+                    <b>${winner.Name}</b>
+                    <span>
+                    Class: ${winner.Class} |
+                    House: ${winner.House} <br>
+                    Published: ${winner.Timestamp}
+                    </span>
+                </div>`;
+
+                container.appendChild(card);
+            });
+
+        } else {
+
             const card = document.createElement('div');
             card.className = 'result-card';
-            if (winner) {
-                card.innerHTML = `<div class="rank-box">${rank}</div><div class="details"><b>${winner.Name}</b><span>
-Class: ${winner.Class} |
-House: ${winner.House} <br>
-Published: ${winner.Timestamp}
-</span>
-</div>`;
-            } else {
-                card.innerHTML = `<div class="rank-box">${rank}</div><div class="details"><span>Updating soon...</span></div>`;
-            }
+            card.innerHTML = `
+            <div class="rank-box">${rank}</div>
+            <div class="details">
+                <span>Updating soon...</span>
+            </div>`;
             container.appendChild(card);
-        });
-        document.getElementById('resultView').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
+        }
+    });
+
+    document.getElementById('resultView').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
 
     function closeResults() { 
         document.getElementById('resultView').style.display = 'none'; 
@@ -367,3 +390,4 @@ function calculateHousePoints(){
 
 </body>
 </html>
+
