@@ -329,7 +329,7 @@ function calculateHousePoints(){
 
     let housePoints = {};
 
-    resultsData.find(entry => {
+    resultsData.forEach(entry => {
 
         const rank = parseInt(entry.Rank);
         const item = entry.Item;
@@ -390,5 +390,6 @@ function calculateHousePoints(){
 
 </body>
 </html>
+
 
 
