@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IASE Arts Fest 2026 - Live</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&family=Poppins:wght@400;600;800&display=swap');
+
+body {
+    font-family: 'Poppins', 'Manjari', sans-serif;
+}
         :root {
             --primary-color: #0d47a1;
             --accent-color: #ffca28;
@@ -47,6 +52,24 @@
         .rank-box { font-size: 20px; font-weight: bold; margin-right: 15px; width: 30px; }
 
         @media (max-width: 500px) { .item-grid { grid-template-columns: 1fr 1fr; } }
+
+        .item-btn {
+    border: none; /* Remove the border for a cleaner look */
+    background: #ffffff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.item-btn:active {
+    transform: scale(0.95); /* Button shrinks slightly when tapped */
+}
+
+/* Make the Rank 1 winner stand out in the modal */
+.result-card:first-of-type {
+    background: linear-gradient(to right, #fff9c4, #ffffff);
+    border-left: 5px solid #ffca28;
+    transform: scale(1.02);
+}
     </style>
 </head>
 <body>
@@ -223,3 +246,4 @@
 </script>
 </body>
 </html>
+
