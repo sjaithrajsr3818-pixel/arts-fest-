@@ -194,7 +194,7 @@
     const HOUSE_COLORS = { "Red": "#ef4444", "Blue": "#3b82f6", "Green": "#22c55e", "Yellow": "#f59e0b", "Orange": "#fb8c00" };
 
     const categorisedItems = {
-        "Stage": ["Light Music", "Poem Recitation (English)", "Poem Recitation (Malayalam)", "Poem Recitation (Hindi)", "Poem Recitation (Sanskrit)", "Poem Recitation (Arabic)", "Kadhaprasangam", "Mono Act", "Mappila Paatu", "Mimicry", "Nadodi Nritham", "Bharatanatyam", "Kuchipudi", "Mohiniyattam","Group Song", "Patriotic Song", "Folk Song", "Vanchipattu", "Oppana", "Margam Kali", "Thiruvathira Kali", "Group Dance"], 
+        "Stage": ["Light Music", "Poem Recitation (English)", "Poem Recitation (Malayalam)", "Poem Recitation (Hindi)", "Poem Recitation (Sanskrit)", "Poem Recitation (Arabic)", "Kadhaprasangam", "Mono Act", "Mappila Paatu", "Mimicry", "Nadodi Nritham", "Bharatanatyam", "Kuchipudi", "Mohiniyattam","Group Song", "Patriotic Song", "Folk Song", "Vanchipattu", "Oppana", "Margam Kali", "Thiruvathira Kali", "Group Dance","Elocution (English)", "Elocution (Malayalam)", "Elocution (Hindi)", "Elocution (Sanskrit)"], 
         "Off Stage": ["Essay Writing (Malayalam)", "Essay Writing (English)", "Essay Writing (Hindi)", "Essay Writing (Sanskrit)", "Short Story Writing (English)", "Short Story Writing (Malayalam)", "Short Story Writing (Hindi)", "Short Story Writing (Sanskrit)", "Poem Writing (English)", "Poem Writing (Malayalam)", "Poem Writing (Hindi)", "Poem Writing (Sanskrit)", "Quiz", "Painting", "Oil Painting", "Water Colouring", "Cartoon", "Pencil Drawing"]
     };
 
@@ -224,9 +224,12 @@
     function parseCSV(text) {
         const rows = text.split('\n').filter(r => r.trim());
         const headers = rows[0].split(',').map(h => h.trim());
-        return rows.slice(1).map(row => {
+        return rows.slice(1).map((row, index) => {
             const v = row.split(',').map(item => item.trim());
-            let obj = {}; headers.forEach((h, i) => obj[h] = v[i]);
+            let obj = {}; 
+            headers.forEach((h, i) => obj[h] = v[i]);
+            // ADDING ROW INDEX: This ensures we know the order of entry
+            obj.rowNum = index; 
             return obj;
         }).filter(r => r.Item);
     }
@@ -248,12 +251,12 @@
         document.getElementById('lastUpdated').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     }
 
-    // FIXED NEWEST-FIRST SORTING
+    // UPDATED RECENT LOGIC: SORTS BY ROW NUMBER (Bottom of sheet = Newest)
     function displayRecent() {
         const container = document.getElementById('recentResults');
         const recent = [...resultsData]
-            .filter(r => r.Rank == "1" && r.Timestamp)
-            .sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp))
+            .filter(r => r.Rank == "1")
+            .sort((a, b) => b.rowNum - a.rowNum) // Newest row (highest index) first
             .slice(0, 8);
 
         if (!recent.length) {
@@ -304,3 +307,4 @@
 </script>
 </body>
 </html>
+
