@@ -3,75 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IASE Arts Fest 2026 - Live</title>
+    <title>IASE Arts Fest 2026 | Live</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Manjari:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0d47a1;
-            --accent-color: #ffca28;
-            --bg-color: #f1f3f5;
-            /* Default House Colors - Edit these to match your actual house names */
-            --color-red: #e53935;
-            --color-blue: #1e88e5;
-            --color-green: #43a047;
-            --color-yellow: #fdd835;
-            --color-default: #757575;
+            --primary: #0f172a; /* Slate 900 */
+            --accent: #3b82f6;  /* Blue 500 */
+            --bg: #f8fafc;      /* Slate 50 */
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            /* House Colors */
+            --house-red: #ef4444;
+            --house-blue: #3b82f6;
+            --house-green: #22c55e;
+            --house-yellow: #eab308;
         }
 
-        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: var(--bg-color); color: #333; }
-        header { background: var(--primary-color); color: white; padding: 25px 15px; text-align: center; }
-        
-        /* Leaderboard Styling */
-        #houseBoard { padding: 20px; max-width: 1000px; margin: -30px auto 20px; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .leaderboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
-        .house-card { padding: 15px; border-radius: 15px; text-align: center; color: white; position: relative; overflow: hidden; }
-        .house-card b { font-size: 1.2rem; display: block; }
-        .house-points { font-size: 1.5rem; font-weight: 800; }
+        body { 
+            font-family: 'Poppins', 'Manjari', sans-serif; 
+            margin: 0; 
+            background: var(--bg); 
+            color: var(--text-main);
+            line-height: 1.6;
+        }
 
-        /* Recent Results Section */
-        .recent-section { max-width: 1100px; margin: 20px auto; padding: 0 20px; }
-        .recent-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-        .recent-pill { background: white; padding: 10px 20px; border-radius: 50px; border-left: 5px solid var(--primary-color); white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        /* Clean Header with Live Pulse */
+        header { 
+            background: var(--primary); 
+            color: white; 
+            padding: 40px 20px; 
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
 
-        .search-container { padding: 10px 20px; max-width: 600px; margin: 0 auto; }
-        #itemSearch { width: 100%; padding: 15px; border-radius: 30px; border: 2px solid #ddd; outline: none; }
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
 
-        .category-title { max-width: 1100px; margin: 25px auto 10px; padding: 0 20px; font-weight: bold; color: var(--primary-color); }
-        .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 10px 20px; max-width: 1100px; margin: 0 auto; }
-        .item-btn { background: white; border: 1px solid #eee; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 600; min-height: 70px; transition: 0.3s; }
-        .item-btn:hover { background: var(--primary-color); color: white; transform: translateY(-3px); }
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            box-shadow: 0 0 0 rgba(74, 222, 128, 0.4);
+            animation: pulse-animation 2s infinite;
+        }
 
-        /* Modal & Cards */
-        #resultView { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center; backdrop-filter: blur(4px); }
-        .modal-content { background:white; width:90%; max-width:500px; border-radius:24px; padding:25px; max-height: 80vh; overflow-y: auto; }
-        .result-card { border-left: 5px solid var(--primary-color); background: #f8f9fa; margin: 10px 0; padding: 12px; border-radius: 8px; display: flex; align-items: center; }
-        .rank-box { font-size: 20px; font-weight: bold; margin-right: 15px; width: 30px; }
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0px rgba(74, 222, 128, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+            100% { box-shadow: 0 0 0 0px rgba(74, 222, 128, 0); }
+        }
 
-        @media (max-width: 500px) { .item-grid { grid-template-columns: 1fr 1fr; } }
+        /* Leaderboard - Clean Horizontal Cards */
+        #houseBoard { 
+            max-width: 1000px; 
+            margin: -40px auto 30px; 
+            padding: 0 20px;
+        }
+
+        .leaderboard-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 15px; 
+        }
+
+        .house-card { 
+            background: var(--card-bg);
+            padding: 20px; 
+            border-radius: 20px; 
+            text-align: center; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            border-bottom: 4px solid #ddd;
+            transition: transform 0.2s;
+        }
+
+        .house-card:hover { transform: translateY(-5px); }
+        .house-name { font-size: 14px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        .house-points { font-size: 28px; font-weight: 700; color: var(--primary); }
+
+        /* Search Bar */
+        .search-container { max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        #itemSearch { 
+            width: 100%; 
+            padding: 16px 24px; 
+            border-radius: 16px; 
+            border: 1px solid #e2e8f0; 
+            font-size: 16px; 
+            outline: none;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        #itemSearch:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+
+        /* Category and Grids */
+        .category-title { 
+            max-width: 1100px; 
+            margin: 40px auto 15px; 
+            padding: 0 20px; 
+            font-size: 18px;
+            font-weight: 700; 
+            color: var(--primary); 
+        }
+
+        .item-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 16px; 
+            padding: 0 20px 40px; 
+            max-width: 1100px; 
+            margin: 0 auto; 
+        }
+
+        .item-btn { 
+            background: white; 
+            border: 1px solid #e2e8f0; 
+            padding: 20px 15px; 
+            border-radius: 16px; 
+            cursor: pointer; 
+            font-weight: 500; 
+            font-size: 14px;
+            color: var(--text-main);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .item-btn:hover { 
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #eff6ff;
+            transform: translateY(-2px);
+        }
+
+        /* Modal Overhaul */
+        #resultView { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(15, 23, 42, 0.8); 
+            backdrop-filter: blur(8px); 
+            z-index: 1000; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px;
+        }
+
+        .modal-content { 
+            background: white; 
+            width: 100%;
+            max-width: 450px; 
+            border-radius: 24px; 
+            padding: 30px; 
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        .result-card { 
+            background: #f1f5f9; 
+            margin: 12px 0; 
+            padding: 16px; 
+            border-radius: 16px; 
+            display: flex; 
+            align-items: center;
+            gap: 15px;
+        }
+
+        .rank-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Scrollbar Hide */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+        @media (max-width: 600px) {
+            .item-grid { grid-template-columns: 1fr 1fr; }
+            .leaderboard-grid { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>IASE Arts Fest 2026</h1>
-    <p>Live Results Portal</p>
+    <div class="live-indicator">
+        <div class="pulse"></div>
+        Live Results
+    </div>
+    <h1 style="margin:0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">IASE Arts Fest 2026</h1>
 </header>
 
 <div id="houseBoard">
-    <h3 style="text-align:center; margin:0; color:#555;">🏆 House Standings</h3>
-    <div id="leaderboardContainer" class="leaderboard-grid"></div>
-    <p style="text-align:center; font-size:11px; color:#999; margin-top:10px;">
-        Last Updated: <span id="lastUpdated">--</span>
+    <div id="leaderboardContainer" class="leaderboard-grid">
+        </div>
+    <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:15px;">
+        Last sync: <span id="lastUpdated">--</span>
     </p>
 </div>
 
-<div class="recent-section">
-    <div style="font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; color: #666;">⚡ LATEST RESULTS</div>
-    <div id="recentResults" class="recent-container">
-        </div>
-</div>
-
 <div class="search-container">
-    <input type="text" id="itemSearch" placeholder="Search item (e.g. Dance, Poem)..." onkeyup="filterItems()">
+    <input type="text" id="itemSearch" placeholder="Search for an item..." onkeyup="filterItems()">
 </div>
 
 <div class="category-title">Stage Items</div>
@@ -82,8 +234,8 @@
 
 <div id="resultView">
     <div class="modal-content">
-        <button onclick="closeResults()" style="float:right; border:none; background:none; font-size:20px; cursor:pointer;">&times;</button>
-        <h2 id="selectedItemTitle" style="color:var(--primary-color); margin-top:0;">Item Name</h2>
+        <button onclick="closeResults()" style="position:absolute; right:20px; top:20px; border:none; background:#f1f5f9; width:32px; height:32px; border-radius:50%; cursor:pointer;">&times;</button>
+        <h2 id="selectedItemTitle" style="margin-top:0; font-size:20px; color:var(--primary);">Item</h2>
         <div id="resultsContainer"></div>
     </div>
 </div>
@@ -91,135 +243,125 @@
 <script>
     const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvr_vyPeraPYciyV4MuAdJRgnTjuXHR55hOBpWIv3Uvs1vsAaUz4pTI3jiNA8dK_bTqXR_JsibZyjX/pub?gid=0&single=true&output=csv';
 
-    // EDIT HOUSE COLORS HERE:
-    const HOUSE_COLORS = {
-        "Red": "#e53935",
-        "Blue": "#1e88e5",
-        "Green": "#43a047",
-        "Yellow": "#fbc02d",
-        "Orange": "#fb8c00"
+    const HOUSE_THEMES = {
+        "Red": "#ef4444",
+        "Blue": "#3b82f6",
+        "Green": "#22c55e",
+        "Yellow": "#eab308"
     };
 
     const categorisedItems = {
-        "Stage": ["Light Music", "Poem Recitation (English)", "Poem Recitation (Malayalam)", "Poem Recitation (Hindi)", "Poem Recitation (Sanskrit)", "Poem Recitation (Arabic)", "Kadhaprasangam", "Mono Act", "Mappila Paatu", "Mimicry", "Nadodi Nritham", "Bharatanatyam", "Kuchipudi", "Mohiniyattam","Group Song", "Patriotic Song", "Folk Song", "Vanchipattu", "Oppana", "Margam Kali", "Thiruvathira Kali", "Group Dance"], 
+        "Stage": ["Light Music", "Poem Recitation (English)", "Poem Recitation (Malayalam)", "Poem Recitation (Hindi)", "Poem Recitation (Sanskrit)", "Poem Recitation (Arabic)", "Kadhaprasangam", "Mono Act", "Mappila Paatu", "Mimicry", "Nadodi Nritham", "Bharatanatyam", "Kuchipudi", "Mohiniyattam","Group Song", "Patriotic Song", "Folk Song", "Vanchipattu", "Oppana", "Margam Kali", "Thiruvathira Kali", "Group Dance"],
         "Off Stage": ["Essay Writing (Malayalam)", "Essay Writing (English)", "Essay Writing (Hindi)", "Essay Writing (Sanskrit)", "Short Story Writing (English)", "Short Story Writing (Malayalam)", "Short Story Writing (Hindi)", "Short Story Writing (Sanskrit)", "Poem Writing (English)", "Poem Writing (Malayalam)", "Poem Writing (Hindi)", "Poem Writing (Sanskrit)", "Quiz", "Painting", "Oil Painting", "Water Colouring", "Cartoon", "Pencil Drawing"]
     };
 
     const GROUP_ITEMS = ["Group Song", "Patriotic Song", "Folk Song", "Vanchipattu", "Oppana", "Margam Kali", "Thiruvathira Kali", "Group Dance", "Quiz"];
     let resultsData = [];
 
-    // Initialize UI
-    function displayButtons() {
-        const stageGrid = document.getElementById('stageGrid');
-        categorisedItems["Stage"].forEach(item => stageGrid.appendChild(createBtn(item)));
-        const offStageGrid = document.getElementById('offStageGrid');
-        categorisedItems["Off Stage"].forEach(item => offStageGrid.appendChild(createBtn(item)));
-    }
-
-    function createBtn(item) {
-        const btn = document.createElement('button');
-        btn.className = 'item-btn';
-        btn.innerText = item;
-        btn.onclick = () => showResults(item);
-        return btn;
-    }
-
     async function loadSheetData() {
         try {
             const response = await fetch(SHEET_URL);
             const data = await response.text();
             resultsData = parseCSV(data);
-            calculateHousePoints();
-            displayRecentUpdates();
-        } catch (e) { console.error("Data load error", e); }
+            updateUI();
+        } catch (e) { console.error("Update failed", e); }
     }
 
-    function parseCSV(text) {
-        const rows = text.split('\n');
-        const headers = rows[0].split(',').map(h => h.trim());
-        return rows.slice(1).map(row => {
-            const values = row.split(',').map(v => v.trim());
+    function parseCSV(t) {
+        const lines = t.split('\n').filter(l => l.trim());
+        const headers = lines[0].split(',').map(h => h.trim());
+        return lines.slice(1).map(line => {
+            const v = line.split(',').map(item => item.trim());
             let obj = {};
-            headers.forEach((h, i) => obj[h] = values[i]);
+            headers.forEach((h, i) => obj[h] = v[i]);
             return obj;
-        }).filter(r => r.Item);
+        });
     }
 
-    function calculateHousePoints() {
-        let housePoints = {};
+    function updateUI() {
+        // Calculate Points
+        let points = {};
         let awarded = new Set();
-
-        resultsData.forEach(entry => {
-            const rank = parseInt(entry.Rank);
-            if (!rank || rank > 3) return;
-            
-            const key = GROUP_ITEMS.includes(entry.Item) ? `${entry.Item}-${rank}-${entry.House}` : null;
-            if (key && awarded.has(key)) return;
-            if (key) awarded.add(key);
-
-            let pts = GROUP_ITEMS.includes(entry.Item) ? [0, 10, 7, 5][rank] : [0, 5, 3, 1][rank];
-            housePoints[entry.House] = (housePoints[entry.House] || 0) + pts;
+        resultsData.forEach(r => {
+            const rank = parseInt(r.Rank);
+            if(!rank || rank > 3) return;
+            const key = GROUP_ITEMS.includes(r.Item) ? `${r.Item}-${rank}-${r.House}` : null;
+            if(key && awarded.has(key)) return;
+            if(key) awarded.add(key);
+            points[r.House] = (points[r.House] || 0) + (GROUP_ITEMS.includes(r.Item) ? [0,10,7,5][rank] : [0,5,3,1][rank]);
         });
 
+        // Update Leaderboard
         const container = document.getElementById('leaderboardContainer');
         container.innerHTML = '';
-        Object.entries(housePoints).sort((a,b) => b[1]-a[1]).forEach(([name, pts]) => {
-            const color = HOUSE_COLORS[name] || '#757575';
+        Object.entries(points).sort((a,b)=>b[1]-a[1]).forEach(([name, pts]) => {
+            const color = HOUSE_THEMES[name] || '#64748b';
             container.innerHTML += `
-                <div class="house-card" style="background:${color}">
-                    <b>${name}</b>
+                <div class="house-card" style="border-bottom-color: ${color}">
+                    <div class="house-name">${name}</div>
                     <div class="house-points">${pts}</div>
                 </div>`;
         });
-        document.getElementById('lastUpdated').innerText = new Date().toLocaleTimeString();
+        document.getElementById('lastUpdated').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     }
 
-    function displayRecentUpdates() {
-        const recent = [...resultsData]
-            .filter(r => r.Rank == "1")
-            .sort((a,b) => new Date(b.Timestamp) - new Date(a.Timestamp))
-            .slice(0, 5);
-
-        const container = document.getElementById('recentResults');
-        container.innerHTML = recent.length ? '' : '<div class="recent-pill">Waiting for results...</div>';
-        recent.forEach(r => {
-            const color = HOUSE_COLORS[r.House] || '#0d47a1';
-            container.innerHTML += `<div class="recent-pill" style="border-left-color:${color}"><b>${r.Item}</b>: ${r.Name} (${r.House})</div>`;
-        });
-    }
-
-    function showResults(itemName) {
-        document.getElementById('selectedItemTitle').innerText = itemName;
+    function showResults(item) {
+        document.getElementById('selectedItemTitle').innerText = item;
         const container = document.getElementById('resultsContainer');
         container.innerHTML = '';
+        const filtered = resultsData.filter(r => r.Item === item);
         
-        const filtered = resultsData.filter(r => r.Item === itemName);
-        [1, 2, 3].forEach(rank => {
-            const winners = filtered.filter(w => parseInt(w.Rank) === rank);
-            if(winners.length > 0) {
-                winners.forEach(w => {
-                    const color = HOUSE_COLORS[w.House] || '#ddd';
+        [1,2,3].forEach(rank => {
+            const match = filtered.filter(w => parseInt(w.Rank) === rank);
+            const emojis = ["", "🥇", "🥈", "🥉"];
+            if(match.length > 0) {
+                match.forEach(m => {
+                    const color = HOUSE_THEMES[m.House] || '#cbd5e1';
                     container.innerHTML += `
-                        <div class="result-card" style="border-left-color:${color}">
-                            <div class="rank-box" style="color:${color}">${rank}</div>
-                            <div><b>${w.Name}</b><br><small>${w.House} | ${w.Class}</small></div>
+                        <div class="result-card">
+                            <div class="rank-circle" style="color:${color}">${emojis[rank]}</div>
+                            <div>
+                                <div style="font-weight:600; font-size:15px;">${m.Name}</div>
+                                <div style="font-size:12px; color:var(--text-muted)">${m.House} House • ${m.Class}</div>
+                            </div>
                         </div>`;
                 });
             } else {
-                container.innerHTML += `<div class="result-card" style="opacity:0.5"><div class="rank-box">${rank}</div><small>Pending...</small></div>`;
+                container.innerHTML += `
+                    <div class="result-card" style="opacity:0.5; background:none; border: 1px dashed #cbd5e1;">
+                        <div class="rank-circle">${rank}</div>
+                        <div style="font-size:13px; color:var(--text-muted)">Results awaiting...</div>
+                    </div>`;
             }
         });
         document.getElementById('resultView').style.display = 'flex';
     }
 
-    function closeResults() { document.getElementById('resultView').style.display = 'none'; }
-
-    function filterItems() {
-        const s = document.getElementById('itemSearch').value.toLowerCase();
-        document.querySelectorAll('.item-btn').forEach(b => b.style.display = b.innerText.toLowerCase().includes(s) ? 'flex' : 'none');
+    function createButtons() {
+        const add = (id, list) => {
+            const g = document.getElementById(id);
+            list.forEach(i => {
+                const b = document.createElement('button');
+                b.className = 'item-btn';
+                b.innerText = i;
+                b.onclick = () => showResults(i);
+                g.appendChild(b);
+            });
+        }
+        add('stageGrid', categorisedItems.Stage);
+        add('offStageGrid', categorisedItems.Off Stage);
     }
 
-    window.onload = () => { displayButtons(); loadSheetData(); setInterval(loadSheetData, 30000); };
+    function filterItems() {
+        const q = document.getElementById('itemSearch').value.toLowerCase();
+        document.querySelectorAll('.item-btn').forEach(b => {
+            b.style.display = b.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
+        });
+    }
+
+    function closeResults() { document.getElementById('resultView').style.display = 'none'; }
+
+    window.onload = () => { createButtons(); loadSheetData(); setInterval(loadSheetData, 30000); };
 </script>
 </body>
 </html>
