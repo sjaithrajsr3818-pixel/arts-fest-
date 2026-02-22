@@ -10,7 +10,6 @@
             --primary-dark: #0f172a;
             --accent-blue: #3b82f6;
             --bg-body: #f8fafc;
-            /* House Themes */
             --color-red: #ef4444;
             --color-blue: #3b82f6;
             --color-green: #22c55e;
@@ -94,12 +93,24 @@
         /* --- RECENT UPDATES --- */
         .recent-section { max-width: 1100px; margin: 40px auto 20px; padding: 0 20px; }
         .recent-container { display: flex; gap: 15px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
+        
         .recent-card-mini {
             background: white; min-width: 260px; padding: 15px; border-radius: 18px;
             display: flex; align-items: center; gap: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             border: 1px solid #f1f5f9;
+            position: relative;
+            flex-shrink: 0;
         }
+
+        .new-tag {
+            position: absolute; top: -8px; right: 10px;
+            background: #ef4444; color: white; font-size: 9px; font-weight: 800;
+            padding: 2px 8px; border-radius: 10px; text-transform: uppercase;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0.5; } }
 
         /* --- SEARCH & BUTTONS --- */
         .search-container { max-width: 600px; margin: 30px auto; padding: 0 20px; }
@@ -127,14 +138,14 @@
         
         .rank-badge { width: 45px; height: 45px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; }
 
-        /* Metallic Podium Logic */
+        /* Metallic Podium Classes */
         .rank-1 { background: linear-gradient(to right, #fffdf0, #ffffff) !important; border-left-color: #fbbf24 !important; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15); transform: scale(1.02); }
         .rank-2 { background: linear-gradient(to right, #f8fafc, #ffffff) !important; border-left-color: #94a3b8 !important; box-shadow: 0 4px 15px rgba(148, 163, 184, 0.1); }
         .rank-3 { background: linear-gradient(to right, #fff7ed, #ffffff) !important; border-left-color: #92400e !important; box-shadow: 0 4px 15px rgba(146, 64, 14, 0.08); }
 
-        .badge-1 { border: 2px solid #fbbf24; }
-        .badge-2 { border: 2px solid #94a3b8; }
-        .badge-3 { border: 2px solid #92400e; }
+        .badge-1 { border: 2px solid #fbbf24; color: #b45309; }
+        .badge-2 { border: 2px solid #94a3b8; color: #475569; }
+        .badge-3 { border: 2px solid #92400e; color: #78350f; }
 
         @media (max-width: 600px) { .item-grid, .leaderboard-grid { grid-template-columns: 1fr 1fr; } }
     </style>
@@ -237,12 +248,27 @@
         document.getElementById('lastUpdated').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     }
 
+    // FIXED NEWEST-FIRST SORTING
     function displayRecent() {
-        const recent = [...resultsData].filter(r => r.Rank == "1").sort((a,b) => new Date(b.Timestamp) - new Date(a.Timestamp)).slice(0, 8);
-        document.getElementById('recentResults').innerHTML = recent.map(r => `
+        const container = document.getElementById('recentResults');
+        const recent = [...resultsData]
+            .filter(r => r.Rank == "1" && r.Timestamp)
+            .sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp))
+            .slice(0, 8);
+
+        if (!recent.length) {
+            container.innerHTML = '<div style="color:#94a3b8; font-size:12px; padding:10px;">Waiting for results...</div>';
+            return;
+        }
+
+        container.innerHTML = recent.map((r, index) => `
             <div class="recent-card-mini">
+                ${index === 0 ? '<span class="new-tag">New</span>' : ''}
                 <div class="rank-badge" style="border:2px solid ${HOUSE_COLORS[r.House] || '#ddd'}">🥇</div>
-                <div><b style="font-size:14px; display:block;">${r.Item}</b><span style="font-size:12px; color:#64748b;">${r.Name} (${r.House})</span></div>
+                <div>
+                    <b style="font-size:14px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;">${r.Item}</b>
+                    <span style="font-size:12px; color:#64748b;">${r.Name} (${r.House})</span>
+                </div>
             </div>`).join('');
     }
 
