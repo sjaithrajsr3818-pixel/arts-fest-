@@ -53,6 +53,82 @@ body {
 
         @media (max-width: 500px) { .item-grid { grid-template-columns: 1fr 1fr; } }
 
+        header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: white;
+    padding: 60px 20px 80px; /* Extra bottom padding for the overlap */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background Decoration */
+header::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+    z-index: 0;
+}
+
+.header-content {
+    position: relative;
+    z-index: 1;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 10px 0;
+    letter-spacing: -1px;
+    background: linear-gradient(to right, #ffffff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.fest-subtitle {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 6px 16px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 15px;
+}
+
+.live-indicator span {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #4ade80;
+}
+
+/* This creates the professional curved bottom */
+header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: var(--bg); /* Matches your body background color */
+    clip-path: ellipse(60% 100% at 50% 100%);
+}
+
         .item-btn {
     border: none; /* Remove the border for a cleaner look */
     background: #ffffff;
@@ -75,8 +151,15 @@ body {
 <body>
 
 <header>
-    <h1>IASE Arts Fest 2026</h1>
-    <p>Live Results Portal</p>
+    <div class="header-content">
+        <div class="live-indicator">
+            <div class="pulse"></div>
+            <span>Live Results</span>
+        </div>
+        <h1>IASE Arts Fest 2026</h1>
+        <p class="fest-subtitle">Feb-24-25</p>
+        <div class="header-decorator"></div>
+    </div>
 </header>
 
 <div id="houseBoard">
@@ -246,4 +329,5 @@ body {
 </script>
 </body>
 </html>
+
 
