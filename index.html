@@ -164,7 +164,17 @@
     <div id="leaderboardContainer" class="leaderboard-grid"></div>
     <p style="text-align:center; font-size:11px; color:#94a3b8; margin-top:15px;">Updated: <span id="lastUpdated">--</span></p>
 </div>
+<!-- STAGE INDIVIDUAL CHAMPIONS -->
+<div class="recent-section">
+    <div class="category-title">🎤 Stage Individual Champions</div>
+    <div id="stageChampions" class="leaderboard-grid"></div>
+</div>
 
+<!-- OFF STAGE INDIVIDUAL CHAMPIONS -->
+<div class="recent-section">
+    <div class="category-title">📝 Off Stage Individual Champions</div>
+    <div id="offStageChampions" class="leaderboard-grid"></div>
+</div>
 <div class="recent-section">
     <div style="font-size:12px; font-weight:800; color:var(--accent-blue); margin-bottom:10px; text-transform:uppercase;">⚡ Latest Announcements</div>
     <div id="recentResults" class="recent-container"></div>
@@ -234,6 +244,58 @@
         }).filter(r => r.Item);
     }
 
+    function calculateIndividualChampions(){
+
+    let stageStudents = {};
+    let offStageStudents = {};
+
+    resultsData.forEach(r => {
+
+        const rank = parseInt(r.Rank);
+        if (!rank || rank > 3) return;  // Only 1,2,3 get points
+
+        if (GROUP_ITEMS.includes(r.Item)) return; // Ignore group items
+
+        const key = `${r.Name}|${r.Class}|${r.House}`;
+        const pointsMap = {1:5, 2:3, 3:1};
+        const pt = pointsMap[rank] || 0;
+
+        if (categorisedItems["Stage"].includes(r.Item)) {
+            stageStudents[key] = (stageStudents[key] || 0) + pt;
+        }
+
+        if (categorisedItems["Off Stage"].includes(r.Item)) {
+            offStageStudents[key] = (offStageStudents[key] || 0) + pt;
+        }
+
+    });
+
+    displayTopStudents(stageStudents, 'stageChampions');
+    displayTopStudents(offStageStudents, 'offStageChampions');
+    }
+    function displayTopStudents(data, containerId){
+
+    const container = document.getElementById(containerId);
+
+    container.innerHTML = Object.entries(data)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,3)
+    .map(([key, pts], i) => {
+
+        const [name, cls, house] = key.split('|');
+
+        return `
+        <div class="house-card rank-${i+1}">
+            <div class="house-name">
+                ${["🥇","🥈","🥉"][i]} ${name}
+            </div>
+            <div style="font-size:12px; color:#64748b;">
+                ${house} House • ${cls}
+            </div>
+            <div class="house-points">${pts} pts</div>
+        </div>`;
+    }).join('');
+    }
     function updateLeaderboard() {
     let pts = {}; 
     let awarded = new Set();
@@ -256,7 +318,7 @@
             const individualPoints = {1: 5, 2: 3, 3: 1};
             pts[r.House] = (pts[r.House] || 0) + (individualPoints[rank] || 0);
         }
-    });
+    calculateIndividualChampions();});
 
     const container = document.getElementById('leaderboardContainer');
     container.innerHTML = Object.entries(pts)
@@ -304,5 +366,6 @@
 </script>
 </body>
 </html>
+
 
 
