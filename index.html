@@ -235,45 +235,42 @@
     }
 
     function updateLeaderboard() {
-        let pts = {}; let awarded = new Set();
-        resultsData.forEach(r => {
-            const rank = parseInt(r.Rank); if (!rank || rank > 3) return;
-            const key = GROUP_ITEMS.includes(r.Item) ? `${r.Item}-${rank}-${r.House}` : null;
-            if (key && awarded.has(key)) return; if (key) awarded.add(key);
-            pts[r.House] = (pts[r.House] || 0) + (GROUP_ITEMS.includes(r.Item) ? [0, 10, 7, 5][rank] : [0, 5, 3, 1][rank]);
-        });
-        const container = document.getElementById('leaderboardContainer');
-        container.innerHTML = Object.entries(pts).sort((a,b)=>b[1]-a[1]).map(([name, p], i) => `
+    let pts = {}; 
+    let awarded = new Set();
+
+    resultsData.forEach(r => {
+        const rank = parseInt(r.Rank); 
+        if (!rank || rank > 4) return;   // Allow rank 1–4 only
+
+        const isGroup = GROUP_ITEMS.includes(r.Item);
+
+        const key = isGroup ? `${r.Item}-${rank}-${r.House}` : null;
+        if (key && awarded.has(key)) return;
+        if (key) awarded.add(key);
+
+        // 🔥 Updated Points Logic
+        if (isGroup) {
+            const groupPoints = {1: 10, 2: 7, 3: 5, 4: 1};
+            pts[r.House] = (pts[r.House] || 0) + (groupPoints[rank] || 0);
+        } else {
+            const individualPoints = {1: 5, 2: 3, 3: 1};
+            pts[r.House] = (pts[r.House] || 0) + (individualPoints[rank] || 0);
+        }
+    });
+
+    const container = document.getElementById('leaderboardContainer');
+    container.innerHTML = Object.entries(pts)
+        .sort((a,b)=>b[1]-a[1])
+        .map(([name, p], i) => `
             <div class="house-card" style="border-bottom-color:${HOUSE_COLORS[name] || '#ddd'}">
                 <div class="house-name">${i === 0 ? '🏆 ' : ''}${name}</div>
                 <div class="house-points">${p}</div>
-            </div>`).join('');
-        document.getElementById('lastUpdated').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    }
+            </div>`
+        ).join('');
 
-    // UPDATED RECENT LOGIC: SORTS BY ROW NUMBER (Bottom of sheet = Newest)
-    function displayRecent() {
-        const container = document.getElementById('recentResults');
-        const recent = [...resultsData]
-            .filter(r => r.Rank == "1")
-            .sort((a, b) => b.rowNum - a.rowNum) // Newest row (highest index) first
-            .slice(0, 8);
-
-        if (!recent.length) {
-            container.innerHTML = '<div style="color:#94a3b8; font-size:12px; padding:10px;">Waiting for results...</div>';
-            return;
-        }
-
-        container.innerHTML = recent.map((r, index) => `
-            <div class="recent-card-mini">
-                ${index === 0 ? '<span class="new-tag">New</span>' : ''}
-                <div class="rank-badge" style="border:2px solid ${HOUSE_COLORS[r.House] || '#ddd'}">🥇</div>
-                <div>
-                    <b style="font-size:14px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;">${r.Item}</b>
-                    <span style="font-size:12px; color:#64748b;">${r.Name} (${r.House})</span>
-                </div>
-            </div>`).join('');
-    }
+    document.getElementById('lastUpdated').innerText =
+        new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
 
     function showResults(item) {
         document.getElementById('selectedItemTitle').innerText = item;
@@ -307,4 +304,5 @@
 </script>
 </body>
 </html>
+
 
