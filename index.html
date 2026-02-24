@@ -235,13 +235,42 @@
     }
 
     function updateLeaderboard() {
-        let pts = {}; let awarded = new Set();
-        resultsData.forEach(r => {
-            const rank = parseInt(r.Rank); if (!rank || rank > 3) return;
-            const key = GROUP_ITEMS.includes(r.Item) ? `${r.Item}-${rank}-${r.House}` : null;
-            if (key && awarded.has(key)) return; if (key) awarded.add(key);
-            pts[r.House] = (pts[r.House] || 0) + (GROUP_ITEMS.includes(r.Item) ? [0, 10, 7, 5][rank] : [0, 5, 3, 1][rank]);
-        });
+    let pts = {}; 
+    let awarded = new Set();
+
+    resultsData.forEach(r => {
+        const rank = parseInt(r.Rank); 
+        if (!rank || rank > 4) return;   // Allow rank 1–4 only
+
+        const isGroup = GROUP_ITEMS.includes(r.Item);
+
+        const key = isGroup ? `${r.Item}-${rank}-${r.House}` : null;
+        if (key && awarded.has(key)) return;
+        if (key) awarded.add(key);
+
+        // Updated Points Logic
+        if (isGroup) {
+            const groupPoints = {1: 10, 2: 7, 3: 5, 4: 1};
+            pts[r.House] = (pts[r.House] || 0) + (groupPoints[rank] || 0);
+        } else {
+            const individualPoints = {1: 5, 2: 3, 3: 1};
+            pts[r.House] = (pts[r.House] || 0) + (individualPoints[rank] || 0);
+        }
+    });
+
+    const container = document.getElementById('leaderboardContainer');
+    container.innerHTML = Object.entries(pts)
+        .sort((a,b)=>b[1]-a[1])
+        .map(([name, p], i) => `
+            <div class="house-card" style="border-bottom-color:${HOUSE_COLORS[name] || '#ddd'}">
+                <div class="house-name">${i === 0 ? '🏆 ' : ''}${name}</div>
+                <div class="house-points">${p}</div>
+            </div>`
+        ).join('');
+
+    document.getElementById('lastUpdated').innerText =
+        new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }
         const container = document.getElementById('leaderboardContainer');
         container.innerHTML = Object.entries(pts).sort((a,b)=>b[1]-a[1]).map(([name, p], i) => `
             <div class="house-card" style="border-bottom-color:${HOUSE_COLORS[name] || '#ddd'}">
@@ -307,5 +336,6 @@
 </script>
 </body>
 </html>
+
 
 
